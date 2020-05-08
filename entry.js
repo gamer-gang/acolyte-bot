@@ -26,8 +26,8 @@ const options = args[2].split(',');
 
 const enableServe = actions.some(v => v === 'serve'),
   enableBuild = actions.some(v => v === 'build'),
-  enableDev = args[1] === 'dev',
   enableDebug = args[1] === 'debug',
+  enableDev = enableDebug || args[1] === 'dev',
   enableProd = args[1] === 'prod',
   showTimestamps = options.some(v => v === 'timestamps');
 
