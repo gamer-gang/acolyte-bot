@@ -1,8 +1,8 @@
+import axios from 'axios';
 import * as ch from 'chalk';
 import * as Discord from 'discord.js';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-
 import messageHandler from './bot';
 import { Store } from './store';
 import { GuildPrefs } from './types';
@@ -16,22 +16,28 @@ export const guildPrefs = new Store<GuildPrefs>({
   writeOnSet: true,
 });
 
-client
-  .on('ready', () => {
-    console.log(ch`{green ${client.user?.tag} connected!}`);
-    client.user?.setPresence({
-      activity: {
-        name: 'your mom',
-        type: 'PLAYING',
-      },
-      status: 'online',
-    });
-  })
-  .on('disconnect', () => {
-    console.log(ch`Bot disconnected.`);
-  })
-  .on('debug', console.debug);
+export let acolyteApi: AcolyteFightSettings;
 
-client.on('message', messageHandler);
+// immediately invoked async function expression (iiafe)
+(async function init() {
+  client
+    .on('ready', () => {
+      console.log(ch`{green ${client.user?.tag} connected!}`);
+      client.user?.setPresence({
+        activity: {
+          name: 'your mom',
+          type: 'PLAYING',
+        },
+        status: 'online',
+      });
+    })
+    .on('disconnect', () => {
+      console.log(ch`Bot disconnected.`);
+    })
+    .on('debug', console.debug);
 
-client.login(process.env.TOKEN);
+  client.on('message', messageHandler);
+  client.login(process.env.TOKEN);
+
+  acolyteApi = (await axios.get('https://acolytefight.io/api/default.acolytefight.json')).data;
+})();
