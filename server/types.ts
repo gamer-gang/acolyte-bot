@@ -6,4 +6,11 @@ export interface GuildPrefs {
 
 export interface CmdParams {
   msg: Discord.Message;
+  args: Array<string>;
+  prefix: string;
+}
+
+export interface Spell {
+  action: string;
+  
 }
