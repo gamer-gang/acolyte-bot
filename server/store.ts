@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import * as fse from 'fs-extra';
-import { objectToMap, mapToObject } from "./util";
+import { objectToMap, mapToObject } from "./common/util";
 
 export interface StoreOptions {
   /** Path to JSON file to store data in. */
@@ -16,8 +16,8 @@ export class Store<T> {
 
   constructor({ path, writeOnSet }: StoreOptions) {
     this.events = new EventEmitter();
-    this.map = this.readFile();
     this.path = path;
+    this.map = this.readFile();
     if (writeOnSet) {
       this.events.addListener('set', () => {
         this.writeFile();
