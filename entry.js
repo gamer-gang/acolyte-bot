@@ -1,4 +1,4 @@
-const conc = require('concurrently');
+const concurrently = require('concurrently');
 const ch = require('chalk');
 
 const serve = {
@@ -20,8 +20,9 @@ if (args.length === 0) {
   process.exit(1);
 }
 
-if (!args[2]) args[2] = '';
 const actions = args[0].split(',');
+
+if (!args[2]) args[2] = '';
 const options = args[2].split(',');
 
 const enableServe = actions.some(v => v === 'serve'),
@@ -77,7 +78,7 @@ const run = [
   ...enableBuild ? [build] : [],
 ];
 
-conc(run, {
+concurrently(run, {
   prefix: showTimestamps ? '[{time}] {name}' : '{name}',
   inputStream: process.stdin,
   timestampFormat: 'MM/dd HH:mm:ss',
