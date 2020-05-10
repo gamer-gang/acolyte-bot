@@ -22,7 +22,7 @@ export default async function (msg: Discord.Message) {
   if (!msg.content.trim().startsWith(prefix)) return;
 
   const args = msg.content
-    .trim() //                  trim            ("  % foo  bar " => "%foO  bAr")
+    .trim() //                  trim            ("  % foo  bar " => "% foO  bAr")
     .substr(prefix.length) //   remove prefix     ("% foO  bAr"  => " foO  bAr")
     .trim() //                  trim agin           (" foO  bAr" => "foO  bAr")
     .toLowerCase() //           make lowercase       ("foO  bAr" => "foo  bar")
@@ -33,17 +33,15 @@ export default async function (msg: Discord.Message) {
   if (args.length === 0) return;
 
   const cmd = args.shift() as string;
+  const flags = args.filter(v => v.startsWith('--'));
+  flags.forEach(v => args.splice(args.indexOf(v), 1));
 
-  if (Object.prototype.hasOwnProperty.call(commands, cmd)) {
-    msg.channel.send(
-      `Got command \`${cmd != '' ? cmd : '(none)'}\`, ` +
-      `arguments \`[${args.join(', ')}]\``,
-    );
-    commands[cmd]({ msg, args, prefix });
-  } else {
-    msg.channel.send(
-      `Got command \`${cmd != '' ? cmd : '(none)'}\`, ` +
-      `arguments \`[${args.join(', ')}]\``,
-    );
-  }
+  msg.channel.send(
+    `Got command \`${cmd != '' ? cmd : '(none)'}\`, ` +
+    `arguments \`[${args.join(', ')}]\`, ` +
+    `and flags \`[${flags.join(', ')}]\``,
+  );
+
+  if (Object.prototype.hasOwnProperty.call(commands, cmd)) commands[cmd]({ msg, args, prefix, flags });
+  else msg.channel.send('No command executed.');
 }

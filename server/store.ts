@@ -1,43 +1,62 @@
 import { EventEmitter } from 'events';
 import * as fse from 'fs-extra';
-import { objectToMap, mapToObject } from "./common/util";
+import { objectToMap, mapToObject } from './common/util';
 
 export interface StoreOptions {
   /** Path to JSON file to store data in. */
   path: string;
-  /** Whether to write to disk every time `store.set()` is called. */
+  /**
+   * Whether to read the file (at `this.path`) immediately on instantiation.
+   *
+   * Default: `true`
+   */
+  readImmediately?: boolean;
+  /**
+   * Whether to write to disk every time `store.set()` is called.
+   *
+   * Default: `false`
+   */
   writeOnSet?: boolean;
 }
 
 export class Store<T> {
+  /** An event emitter that emits events for each operation of the store. */
   public events: EventEmitter;
+  /** Internal map for holding values. */
   private map: Map<string, T>;
+  /** Path to store data, in JSON format. */
   public path: string;
 
-  constructor({ path, writeOnSet }: StoreOptions) {
+  /** Create a new store instance. */
+  constructor(options: StoreOptions) {
     this.events = new EventEmitter();
-    this.path = path;
-    this.map = this.readFile();
-    if (writeOnSet) {
+    this.path = options.path;
+    this.map = new Map<string, T>();
+    options.readImmediately || this.readFile();
+    if (options.writeOnSet) {
       this.events.addListener('set', () => {
         this.writeFile();
       });
     }
   }
-  /** Read the contents of `userStore.path`
-   * and interpret as `Map`; if it throws an error,
-   * will return an empty map instead. */
+  /**
+   * Read the contents of `this.path` and interpret as JSON;
+   * if file read throws an error, will set to an empty map instead.
+   * Emits `read` once complete.
+   */
   readFile() {
     try {
       const raw = (fse.readFileSync(this.path) as unknown) as string;
-      const data: object = JSON.parse(raw);
-      return objectToMap(data) as Map<string, T>;
+      const data = JSON.parse(raw) as { [key: string]: T };
+      this.map = objectToMap<T>(data) as Map<string, T>;
+      this.events.emit('read');
     } catch (err) {
-      return new Map<string, T>();
+      this.map = new Map<string, T>();
+      this.events.emit('read');
     }
   }
   /** Delete all users from the map.
-   * Emits `clear` once writing is complete. */
+   * Emits `clear` once complete. */
   async clear() {
     this.map.clear();
     await this.writeFile();
@@ -50,12 +69,16 @@ export class Store<T> {
     this.events.emit('write');
   }
   /** Set the value for a given key.
-   * Emits `set` after setting is complete. */
+   * Emits `set` once complete. */
   set(key: string, value: T) {
     this.map.set(key, value);
     this.events.emit('set');
   }
-  /** Only set the value if it doesn't exist. */
+  /**
+   * Only set the value if it doesn't exist.
+   *
+   * Directly calls `this.set()`.
+   */
   setIfUnset(key: string, value: T) {
     if (this.has(key)) return;
     this.set(key, value);

@@ -1,7 +1,7 @@
-import { CmdParams } from '../types';
+import { CmdParams, Documentation } from '../types';
 import { CustomEmbed } from '../common/embed';
 
-export function about(params: CmdParams) {
+async function about(params: CmdParams) {
   params.msg.channel.send(
     new CustomEmbed({
       title: 'About',
@@ -21,3 +21,14 @@ export function about(params: CmdParams) {
     }),
   );
 }
+
+namespace about {
+  export const docs: Documentation = {
+    usage: 'about',
+    description: 'Show bot info',
+    detailed: 'Shows information about authors, source code, and other useful stuff.',
+  };
+}
+
+
+export = about;

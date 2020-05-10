@@ -1,43 +1,25 @@
-import { CmdParams } from '../types';
-import { about } from './about';
-import { help } from './help';
-import { prefix } from './prefix';
-import { prefs } from './prefs';
-import { spell } from './spell';
+import { CmdParams, Documentation } from '../types';
 
+// To add a new command:
+// 1. write your command and documentation as shown in `template.ts`
+
+// 2. Import it as a namespace
+import * as about from './about';
+import * as help from './help';
+import * as prefix from './prefix';
+import * as prefs from './prefs';
+import * as spell from './spell';
+
+// 3. Export it in this object
 export default { help, prefs, prefix, spell, about } as {
   [command: string]: (params: CmdParams) => any;
 };
 
-export const docs: {
-  [command: string]: { usage: string; description: any; detailed: string };
-} = {
-  about: {
-    usage: 'about',
-    description: 'Show bot info',
-    detailed: 'Shows information about authors, source code, and other useful stuff.',
-  },
-  help: {
-    usage: 'help [command]',
-    description: 'Show all commands, or show detailed help for a specific command',
-    detailed:
-      'If called with no arguments, shows a list of all availible commands. If called with one argument, displays detailed help for that command (like this). Command prefix can be configured using the `prefix` command.',
-  },
-  prefs: {
-    usage: 'prefs',
-    description: "List this server's preferences",
-    detailed: "Displays stored cofiguration for the requester's guild in JSON format.",
-  },
-  prefix: {
-    usage: 'prefix [newprefix]',
-    description: "Show this guild's prefix, or modify it (requires `ADMINISTRATOR` permission)",
-    detailed:
-      'If called with no arguments, displays current prefix. If called with one argument, modifies the guild configuration with the provided argument. Requester must have the `ADMINISTRATOR` permission, otherwise an errow will be thrown.',
-  },
-  spell: {
-    usage: 'spell <id|name>',
-    description: 'Show the stats of a spell',
-    detailed:
-      'Displays detailed data from the default Acolyte Fight configuration file. A spell name (e.g. `gravity`) or  spell ID (e.g. `ensnare`) can be provided; both will show the same result.',
-  },
+// 4. Add it to the docs object
+export const docs: { [command: string]: Documentation } = {
+  about: about.docs,
+  help: help.docs,
+  prefs: prefs.docs,
+  prefix: prefix.docs,
+  spell: spell.docs,
 };
