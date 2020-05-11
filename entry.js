@@ -16,7 +16,9 @@ const args = process.argv.slice(2);
 const pkgMgr = process.env.npm_config_user_agent.split('/')[0];
 
 if (args.length === 0) {
-  console.error(ch`{reset.yellow.dim main} {reset.red.bold Error: no arguments provided. Run "pnpm run help" for usage.}`);
+  console.error(
+    ch`{reset.yellow.dim main} {reset.red.bold Error: no arguments provided. Run "pnpm run help" for usage.}`,
+  );
   process.exit(1);
 }
 
@@ -46,7 +48,11 @@ if (!enableDev && !enableProd) {
   process.exit(1);
 }
 
-console.log(ch`{reset.yellow.dim main} {reset Starting [${actions.join(', ')}] in ${args[1]} mode with options [${options.join(', ')}]}`);
+console.log(
+  ch`{reset.yellow.dim main} {reset Starting [${actions.join(', ')}] in ${
+    args[1]
+  } mode with options [${options.join(', ')}]}`,
+);
 
 serve.command = serve.command
   .replace('$ENV', 'cross-env' + ` NODE_ENV=${enableDev ? 'development' : 'production'}`)
@@ -57,7 +63,7 @@ serve.command = serve.command
 build.command = build.command
   .replace('$ENV', 'cross-env' + ` NODE_ENV=${enableDev ? 'development' : 'production'}`)
   .replace('$CMD', 'webpack')
-  .replace('$FLAGS', enableDev ? '--watch' : '')
+  .replace('$FLAGS', enableDev && enableServe ? '--watch' : '')
   .replace('$ARGS', '');
 
 process.stdin.resume();
