@@ -4,9 +4,11 @@
   "description": "bot",
   "scripts": {
     "entry": "node entry",
+    "build": "node entry build",
     "debug": "node entry serve,build debug",
     "dev": "node entry serve,build dev",
     "prod": "node entry build prod && node entry serve prod",
+    "postinstall": "mkdir -p data && touch data/guildprefs.json && echo \"{}\" > data/guildprefs.json",
     "clean": "rm -r dist/*"
   },
   "author": "wiisportsresort",
