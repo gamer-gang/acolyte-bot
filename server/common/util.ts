@@ -51,3 +51,23 @@ export function objectToMap<T>(obj: { [key: string]: T }) {
 export function yaml(object: { [key: string]: any }, codeBlock = true) {
   return (codeBlock ? '```yaml\n' : '') + YAML.stringify(object) + (codeBlock ? '```' : '');
 }
+
+export class Timer {
+  start: [number, number];
+  duration?: number;
+
+  constructor() {
+    this.start = process.hrtime();
+  }
+
+  end() {
+    const end = process.hrtime(this.start);
+
+    // time in ms
+    this.duration = (end[0] * 1000000000 + end[1]) / 1000000;
+  }
+
+  restart() {
+    this.start = process.hrtime();
+  }
+}
