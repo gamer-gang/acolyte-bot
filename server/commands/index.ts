@@ -12,7 +12,7 @@ import * as spell from './spell';
 
 // 3. Export it in this object
 export default { help, prefs, prefix, spell, about } as {
-  [command: string]: (params: CmdParams) => any;
+  [command: string]: (params: CmdParams) => Promise<any>;
 };
 
 // 4. Add it to the docs object
