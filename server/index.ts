@@ -13,6 +13,7 @@ export const client = new Discord.Client();
 
 export const guildPrefs = new Store<GuildPrefs>({
   path: path.join(process.cwd(), 'data/guildprefs.json'),
+  readImmediately: true,
   writeOnSet: true,
 });
 

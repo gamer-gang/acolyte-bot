@@ -8,7 +8,7 @@ export interface StoreOptions {
   /**
    * Whether to read the file (at `this.path`) immediately on instantiation.
    *
-   * Default: `true`
+   * Default: `false`
    */
   readImmediately?: boolean;
   /**
